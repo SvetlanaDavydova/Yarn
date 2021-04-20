@@ -13,7 +13,7 @@ connection.connect(function(err){
     console.log("подключено к базе данных");
 })
 
-exports.getAllYarn = function(){
+exports.getAll = function(){
     return new Promise(function(resolve,reject){
         connection.query("select * from yarn", (err,results,fields) => {
             if(err) {
@@ -21,8 +21,7 @@ exports.getAllYarn = function(){
             }
             resolve(results[0]);
         })
-    })
-    
+    })    
 } 
 
 exports.getYarnById = function(id) {

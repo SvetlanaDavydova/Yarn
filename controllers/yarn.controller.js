@@ -12,69 +12,40 @@ connection.connect(function(err){
     console.log("подключено к базе данных");
 })
 
-exports.getAllYarn = function(){
-    return new Promise(function(resolve,reject){
-        connection.query("select * from yarn", (err,results,fields) => {
-            if(err) {
-                reject(new Error('cannot sql'))
-            }
-            resolve(results);
-        })
-    })
+exports.getAll = (req, res) => {
+    getAllYarn()
+        .then((results) => res.send(results))
+        .catch((err) => res.status(500).send(err.message));
 }
 
-exports.getYarnById = function(id) {
-    return new Promise(function(resolve,reject){
-        connection.query("select * from yarn where id = " + id, (err,results,fields) => {
-            if(err) {
-                reject(new Error('cannot sql'))
-            }
-            resolve(results);
-        })
-    })   
+exports.getById = (req,res) => {
+    let id = req.params.id;
+    getYarnById(id)
+            .then((results) => res.send(results))
+            .catch((err) => res.status(500).send(err.message));
+}
+exports.deleteYarnById = (req,res) => {
+    let id = req.params.id;
+        deleteYarn(id)
+        .then((results) => res.send(results))
+        .catch((err) => res.status(500).send(err.message));
 }
 
-exports.deleteYarn = function(id){
-    return new Promise(function(resolve,reject){
-        connection.query("delete from yarn where id = " + id, (err,results,fields) => {
-            if(err){
-                reject(new Error("yarn not found"))
-            }
-            resolve(results);
-        })
-    })
+exports.updateYarnById = (req,res) => {
+    if(!req.body) {
+        res.status(404).send();
+    }    
+    updateYarn(req.body)
+        .then((results) => res.send(results))
+        .catch((err) => res.status(500).send(err.message));
 }
 
-exports.updateYarn = function(body){
-    let colourYarn = body.colour;
-    let firmaYarn = body.firma;
-    let articulYarn = body.articul;
-    let id = body.id;
-
-    return new Promise(function(resolve,reject){
-        connection.query(`update yarn set articul = ${articulYarn}, firma = ${firmaYarn}, colour = ${colourYarn} where id = ${id}`, (err,results,fields) => {
-            if(err){
-                reject(new Error("can't update yarn"));
-            }
-            resolve(results);
-        })
-    })
-}
-
-exports.createYarn = function(body){
-
-    let articulYarn = body.articul;
-    let colourYarn = body.colour;
-    let firmaYarn = body.firma;
-
-    console.log(articulYarn,colourYarn, firmaYarn );
-
-    return new Promise(function(resolve,reject){
-        connection.query("INSERT INTO yarn VALUES (" + 4 + ", ${articulYarn}, ${colourYarn}, ${firmaYarn})" , (err,results,fields) => {
-            if(err){
-                reject(err)
-            }
-            resolve(results);
-        })
-    })
+exports.createNewYarn = (req,res) => {
+    if(!req.body) {
+        res.status(400).send();
+    }    
+    createYarn(req.body)
+        .then((results) => res.send(results))
+        .catch((err) => res.status(500).send(err.message));
+        
 }
